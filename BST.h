@@ -44,3 +44,67 @@ public:
 
     void showStatistics() const;
 };
+// Basic Functions:
+
+void BST::printEvent(const Event& e) const {
+    cout << "ID: "<< e.id<< endl;
+    cout << "Time: "<< e.timestamp<< endl;
+    cout << "Cat: "<< e.category<< endl;
+    cout << "Desc: "<< e.description<< endl;
+}
+//--------------------------------------------------------------------------------
+// insert 
+void BST::insert(int timestamp, const string& category, const string& description) {
+    Event e(nextId++, timestamp, category, description);
+    
+    comparisons = 0;
+    root = insertRec(root, e, comparisons);
+    cout <<"Added (ID): "<<e.id<<" , comparisons: "<<comparisons<<endl;
+}
+Node* BST::insertRec(Node* node, const Event& e, int& comp) {
+    if (node == nullptr) {
+        Node *temp = new Node(e);
+        return temp;
+    }
+    
+    comp++; 
+    
+    if (e.timestamp < node->data.timestamp) {
+        node->left = insertRec(node->left, e, comp);
+    } else {
+        node->right = insertRec(node->right, e, comp);
+    }
+    
+    return node;
+}
+//--------------------------------------------------------------------------------
+// search
+void BST::search(int timestamp) const {
+    int comp = 0;
+    Node* found = searchRec(root, timestamp, comp);
+    
+    if (found) {
+        cout<<"End"<<endl;
+        printEvent(found->data);
+    } else {
+        cout <<"Not found"<<endl;
+    }
+    cout<<"comparisons: "<<comp<<endl;
+}
+Node* BST::searchRec(Node* node, int ts, int& comp) const {
+    if (node == nullptr) {
+        return nullptr;
+    }
+    
+    comp++;
+    
+    if (ts == node->data.timestamp) {
+        return node;
+    }
+    
+    if (ts < node->data.timestamp) {
+        return searchRec(node->left, ts, comp);
+    }
+    
+    return searchRec(node->right, ts, comp);
+}
