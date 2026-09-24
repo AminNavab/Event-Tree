@@ -108,3 +108,68 @@ Node* BST::searchRec(Node* node, int ts, int& comp) const {
     
     return searchRec(node->right, ts, comp);
 }
+//--------------------------------------------------------------------------------
+// delete
+void BST::remove(int timestamp) {
+    comparisons = 0;
+    root = deleteRec(root, timestamp, comparisons);
+    cout<<"Deleted - "<<"comparisons: "<<comparisons<<endl;
+
+}
+Node* BST::deleteRec(Node* node, int ts, int& comp) {
+    if (node == nullptr){
+         return node;
+    }
+    
+    comp++;
+    
+    if (ts < node->data.timestamp) {
+        node->left = deleteRec(node->left, ts, comp);
+    }
+    else if (ts > node->data.timestamp) {
+        node->right = deleteRec(node->right, ts, comp);
+    }
+    else {
+        if (node->left == nullptr) {
+            Node* temp = node->right;
+            delete node;
+            return temp;
+        }
+        else if (node->right == nullptr) {
+            Node* temp = node->left;
+            delete node;
+            return temp;
+        }
+        
+        
+        Node* temp = minValueNode(node->right);
+        node->data = temp->data;
+        node->right = deleteRec(node->right, temp->data.timestamp, comp);
+    }
+    
+    return node;
+}
+Node* BST::minValueNode(Node* node) const {
+    Node* current = node;
+    while (current && current->left != nullptr) {
+        current = current->left;
+    }
+    return current;
+}
+//--------------------------------------------------------------------------------
+// inorder
+void BST::showAllInOrder() const {
+    if (root == nullptr) {
+        cout<<"The Tree is empty"<<endl;
+        return;
+    }
+    cout<<"Event in chronological order"<<endl;
+    inorderRec(root);
+}
+void BST::inorderRec(Node* node) const {
+    if (node) {
+        inorderRec(node->left);
+        printEvent(node->data);
+        inorderRec(node->right);
+    }
+}
