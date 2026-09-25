@@ -226,3 +226,104 @@ void BST::findClosest(int t) const {
     cout<<"Time difference: "<<minDiff<<endl;
     cout<<"comparisons: "<<comp<<endl;
 }
+void BST::findClosestHelper(Node* node, int t, Event& closest, int& minDiff, int& comp) const {
+    if (node == nullptr) return;
+    
+    comp++;
+    
+    int diff = abs(node->data.timestamp - t);
+    if (diff < minDiff) {
+        minDiff = diff;
+        closest = node->data;
+    }
+    
+    if (t < node->data.timestamp) {
+        findClosestHelper(node->left, t, closest, minDiff, comp);
+    } else {
+        findClosestHelper(node->right, t, closest, minDiff, comp);
+    }
+}
+//--------------------------------------------------------------------------------
+// count category
+void BST::countCategories(int t1, int t2) const {
+    vector<string> categories;
+    vector<int>    counts;
+    int comp = 0;
+    
+    countCatRec(root, t1, t2, categories, counts, comp);
+    
+    if (categories.empty()) {
+        cout <<"there is no Event in this range"<<endl;
+    } else {
+        cout <<"Counting the categories in this range"<<endl;
+        for (size_t i = 0; i < categories.size(); ++i) {
+            cout<<categories[i]<<"__"<<counts[i]<<endl;
+        }
+    }
+    cout <<"comparisons: "<<comp<<endl;
+}
+
+void BST::countCatRec(Node* node, int t1, int t2,vector<string>& cats, vector<int>& counts, int& comp) const {
+    if (node == nullptr) return;
+    
+    comp++;
+    
+    if (node->data.timestamp > t1) {                            // go left
+        countCatRec(node->left, t1, t2, cats, counts, comp);
+    }
+    
+    if (t1 <= node->data.timestamp && node->data.timestamp <= t2) {
+        bool found = false;
+        for (size_t i = 0; i < cats.size(); ++i) {
+            if (cats[i] == node->data.category) {
+                counts[i]++;
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            cats.push_back(node->data.category);
+            counts.push_back(1);
+        }
+    }
+    
+    if (node->data.timestamp < t2) {                            // go right
+        countCatRec(node->right, t1, t2, cats, counts, comp);
+    }
+}
+//--------------------------------------------------------------------------------
+// status
+void BST::showStatistics() const {
+    if (root == nullptr) {
+        cout <<"The Tree is empty"<<endl;
+        return;
+    }
+    
+    int h = heightRec(root);
+    long long sumDepth = 0;
+    int nodeCount = 0;
+    depthSumRec(root, 0, sumDepth, nodeCount);
+    
+    double avgDepth = (nodeCount > 0) ? static_cast<double>(sumDepth) / nodeCount : 0;
+    
+    cout <<"|| Tree Information ||"<<endl;
+    cout << "Height: "<<h<<endl;
+    cout <<"Number of Nodes: "<<nodeCount<<endl;
+    cout <<"Average Depth: "<<avgDepth<<endl;
+}
+
+int BST::heightRec(Node* node) const {
+    if (node == nullptr) return 0;
+    return 1 + max(heightRec(node->left), heightRec(node->right));
+}
+
+void BST::depthSumRec(Node* node, int depth, long long& sum, int& cnt) const {
+    if (node == nullptr) return;
+    
+    sum += depth;
+    cnt++;
+    
+    depthSumRec(node->left,  depth + 1, sum, cnt);
+    depthSumRec(node->right, depth + 1, sum, cnt);
+}
+
