@@ -173,3 +173,56 @@ void BST::inorderRec(Node* node) const {
         inorderRec(node->right);
     }
 }
+// range search                                              node_1 < x < node_2
+void BST::getEventsBetween(int t1, int t2) const {
+    vector<Event> result;
+    int comp = 0;
+    
+    rangeRec(root, t1, t2, result, comp);
+    
+    if (result.empty()) {
+        cout<<"No Event found in the range ("<<t1<<" , "<<t2<<")"<<endl;
+       
+    } else {
+        cout<<"Event in the range ("<<t1<<" , "<<t2<<")"<<endl;
+        for (const auto& ev : result) {
+            printEvent(ev);
+        }
+    }
+    cout<<"comparisons: "<<comp<<endl;
+}
+void BST::rangeRec(Node* node, int t1, int t2, vector<Event>& res, int& comp) const {
+    if (node == nullptr) return;
+
+    comp++;
+    
+    if (node->data.timestamp > t1) {
+        rangeRec(node->left, t1, t2, res, comp);
+    }
+    
+    if (t1 <= node->data.timestamp && node->data.timestamp <= t2) {
+        res.push_back(node->data);
+    }
+    
+    if (node->data.timestamp < t2) {
+        rangeRec(node->right, t1, t2, res, comp);
+    }
+}
+//--------------------------------------------------------------------------------
+// closest event
+void BST::findClosest(int t) const {
+    if (root == nullptr) {
+        cout <<"The Tree is empty"<<endl;
+        return;
+    }
+    
+    Event closest = root->data;
+    int minDiff = INT_MAX;          // 999
+    int comp = 0;
+    
+    findClosestHelper(root, t, closest, minDiff, comp);
+    cout<<"the closest Event to: "<<t<<endl;
+    printEvent(closest);
+    cout<<"Time difference: "<<minDiff<<endl;
+    cout<<"comparisons: "<<comp<<endl;
+}
