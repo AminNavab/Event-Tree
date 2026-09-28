@@ -13,13 +13,16 @@ int main()
     string cat, desc;  
     
     
-    tree.insert(1,"a1","1_a1");
+    
     tree.insert(2,"a2","2_a2");
-    tree.insert(3,"a3","3_a3");
-    tree.insert(4,"a4","4_a4");
-    tree.insert(5,"a5","5_a5");
-    tree.insert(6,"a6","6_a6");
     tree.insert(7,"a7","7_a7");
+    tree.insert(3,"a3","3_a3");
+    tree.insert(6,"a6","6_a6");
+    tree.insert(4,"a4","4_a4");
+    tree.insert(1,"a1","1_a1");
+    tree.insert(5,"a5","5_a5");
+   
+    
 
 
 
@@ -33,7 +36,9 @@ int main()
         cout << "4. Show events in time range\n";
         cout << "5. Find closest event\n";
         cout << "6. Show tree statistics\n";
-        cout << "7. Exit\n";
+        cout << "7. showAllInOrder\n";
+        cout << "8. countCategories\n";
+        cout << "9. Exit\n";
         cout<<"Enter your choice: ";
         cin >> choice;
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
@@ -89,19 +94,22 @@ int main()
             cout <<"|| show statistice ||"<<endl;
             tree.showStatistics();
         }
-        else if (choice == 7)
-        {
-            break;       
-        }
-        else if(choice == 8){
+    
+        else if(choice == 7){
             tree.showAllInOrder();
         }
-        else if(choice == 9){
+        else if(choice == 8){
             int t1;
+            cout<<"enter being\n";
             cin>>t1;
             int t2;
+            cout<<"enter end\n";
             cin>>t2;
             tree.countCategories(t1,t2);
+        }
+            else if (choice == 9)
+        {
+            break;       
         }
         else
         {
